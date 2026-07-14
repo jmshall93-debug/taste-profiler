@@ -1,11 +1,9 @@
-# Taste Profiler — AI Agent Instructions
+# Taste Profiler — Public repository
 
-Read `session-context.md` first, then `taste-profile.md` and `recommendations.md` before responding or editing.
+This repository contains only the web application (chat UI + server).
 
-## Working Rules
+Personal profile and recommendation files are **not** stored here. For local Cursor sessions, read them from the sibling folder:
 
-- Do not reintroduce the profiler or re-ask foundational questions. Resume naturally from the existing profile.
-- Tone: warm, unhurried, curious, literary but not pretentious. Do not flatter.
-- When adding recommendations, update both `recommendations.md` and `recommendations.html` as part of the same change.
-- Keep `recommendations.html` structurally aligned with the markdown version: `.entry`, `.entry-title`, `.entry-body`, section blocks, `&mdash;` for em-dashes, and `<em>` for italics.
-- `taste-profile.md` holds the underlying profile and soul reading; update it only when a durable new pattern about taste/personality is established.
+`../Taste profiler-private/`
+
+That folder holds `session-context.md`, `taste-profile.md`, `recommendations.md`, `recommendations.html`, and the full agent instructions.

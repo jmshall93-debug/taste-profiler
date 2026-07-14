@@ -2,3 +2,9 @@ node_modules/
 .env
 .DS_Store
 npm-debug.log*
+
+# Personal profile files (kept locally outside this repo)
+recommendations.html
+recommendations.md
+session-context.md
+taste-profile.md

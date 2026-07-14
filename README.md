@@ -94,10 +94,4 @@ The server applies:
 |------|---------|
 | `index.html` | Chat interface |
 | `server.js` | Express server and OpenAI proxy |
-| `recommendations.html` | Static reading room |
-| `taste-profile.md` | Profile and soul reading |
-| `recommendations.md` | Curated recommendations |
-
-## Reading room
-
-Static recommendations are available at `/recommendations` when the server is running.
+| `render.yaml` | Render deployment blueprint |

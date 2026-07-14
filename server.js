@@ -44,7 +44,6 @@ When the conversation starts, introduce yourself briefly and invite them to begi
 const app = express();
 const ROOT = path.resolve(__dirname);
 const INDEX_HTML = path.join(ROOT, 'index.html');
-const RECOMMENDATIONS_HTML = path.join(ROOT, 'recommendations.html');
 
 app.disable('x-powered-by');
 
@@ -126,10 +125,6 @@ app.post('/api/chat', chatLimiter, async (req, res) => {
 
 app.get('/', (_req, res) => {
   res.sendFile(INDEX_HTML);
-});
-
-app.get('/recommendations', (_req, res) => {
-  res.sendFile(RECOMMENDATIONS_HTML);
 });
 
 app.use(express.static(ROOT, {
