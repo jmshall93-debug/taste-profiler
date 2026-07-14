@@ -42,6 +42,9 @@ Tone: warm, unhurried, curious. Literary but not pretentious. You take their tas
 When the conversation starts, introduce yourself briefly and invite them to begin sharing what they love. Start with one open question. Do not list categories at them — let it unfold naturally.`;
 
 const app = express();
+const ROOT = path.resolve(__dirname);
+const INDEX_HTML = path.join(ROOT, 'index.html');
+const RECOMMENDATIONS_HTML = path.join(ROOT, 'recommendations.html');
 
 app.disable('x-powered-by');
 
@@ -121,19 +124,19 @@ app.post('/api/chat', chatLimiter, async (req, res) => {
   }
 });
 
-app.use(express.static(path.join(__dirname), {
+app.get('/', (_req, res) => {
+  res.sendFile(INDEX_HTML);
+});
+
+app.get('/recommendations', (_req, res) => {
+  res.sendFile(RECOMMENDATIONS_HTML);
+});
+
+app.use(express.static(ROOT, {
   index: false,
   dotfiles: 'ignore',
 }));
 
-app.get('/', (_req, res) => {
-  res.sendFile(path.join(__dirname, 'app.html'));
-});
-
-app.get('/recommendations', (_req, res) => {
-  res.sendFile(path.join(__dirname, 'recommendations.html'));
-});
-
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Taste Profiler running at http://localhost:${PORT}`);
 });

@@ -32,7 +32,7 @@ The API key lives only in `.env` on the server. It is never sent to the browser,
 ## How it works
 
 - **Node** runs the JavaScript server process.
-- **Express** serves `app.html` and exposes a protected `/api/chat` endpoint.
+- **Express** serves `index.html` and exposes a protected `/api/chat` endpoint.
 - The browser sends conversation messages to `/api/chat`; the server adds the system prompt and calls OpenAI with `OPENAI_API_KEY`.
 - Responses stream back to the browser. Conversation history is stored in the browser's `localStorage` only.
 
@@ -92,7 +92,7 @@ The server applies:
 
 | File | Purpose |
 |------|---------|
-| `app.html` | Chat interface |
+| `index.html` | Chat interface |
 | `server.js` | Express server and OpenAI proxy |
 | `recommendations.html` | Static reading room |
 | `taste-profile.md` | Profile and soul reading |
