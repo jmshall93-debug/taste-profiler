@@ -6,17 +6,18 @@
   <title>Taste Profiler — Soul Harmony Guide</title>
   <style>
     :root {
-      --bg:        #0c0b09;
-      --bg-2:      #131210;
-      --bg-3:      #1c1a16;
-      --border:    #272420;
-      --text:      #d6c8ae;
-      --text-dim:  #7a6e5f;
-      --text-faint:#3a342c;
-      --accent:    #c49a52;
-      --accent-dim:#7a5e30;
-      --serif:     'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Times New Roman', serif;
-      --sans:      -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --bg:         #0a0908;
+      --bg-2:       #121110;
+      --bg-3:       #1a1816;
+      --border:     #2a2724;
+      --text:       #e8e4dc;
+      --text-muted: #9a948a;
+      --text-faint: #5c5650;
+      --accent:     #b8925a;
+      --accent-dim: #7a6340;
+      --font-display: Charter, 'Bitstream Charter', Cambria, Georgia, serif;
+      --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --measure: 42rem;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -25,7 +26,7 @@
       height: 100%;
       background: var(--bg);
       color: var(--text);
-      font-family: var(--sans);
+      font-family: var(--font-body);
       font-size: 15px;
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
@@ -50,11 +51,11 @@
     }
 
     #app-header h1 {
-      font-family: var(--serif);
-      font-size: 0.95rem;
-      font-weight: normal;
-      color: var(--accent);
-      letter-spacing: 0.05em;
+      font-family: var(--font-body);
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.01em;
     }
 
     #app-header .header-right {
@@ -64,14 +65,15 @@
     }
 
     #mode-badge {
-      font-size: 0.65rem;
-      letter-spacing: 0.12em;
+      font-family: var(--font-body);
+      font-size: 0.62rem;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
-      color: var(--text-dim);
+      color: var(--text-faint);
       border: 1px solid var(--border);
-      padding: 0.2rem 0.6rem;
+      padding: 0.2rem 0.55rem;
       border-radius: 2px;
-      transition: color 0.3s, border-color 0.3s;
+      transition: color 0.2s, border-color 0.2s;
     }
 
     #mode-badge.reading {
@@ -83,15 +85,16 @@
       background: none;
       border: none;
       color: var(--text-faint);
-      font-size: 0.7rem;
-      letter-spacing: 0.08em;
+      font-family: var(--font-body);
+      font-size: 0.68rem;
+      letter-spacing: 0.04em;
       text-transform: uppercase;
       cursor: pointer;
       padding: 0.2rem 0;
       transition: color 0.15s;
     }
 
-    #clear-btn:hover { color: var(--text-dim); }
+    #clear-btn:hover { color: var(--text-muted); }
 
     #clear-btn:focus-visible,
     #send-btn:focus-visible {
@@ -129,121 +132,149 @@
     #messages::-webkit-scrollbar-track { background: transparent; }
     #messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-    .msg { display: flex; flex-direction: column; max-width: 680px; width: 100%; }
-    .msg.user { align-self: flex-end; align-items: flex-end; max-width: 520px; }
+    .msg {
+      display: flex;
+      flex-direction: column;
+      max-width: var(--measure);
+      width: 100%;
+    }
+
+    .msg.user { align-self: flex-end; align-items: flex-end; max-width: 34rem; }
     .msg.assistant { align-self: flex-start; }
 
     .msg-label {
-      font-size: 0.62rem;
-      letter-spacing: 0.12em;
+      font-family: var(--font-body);
+      font-size: 0.58rem;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
       color: var(--text-faint);
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.4rem;
     }
 
+    .msg.assistant .msg-label { display: none; }
+
     .msg-body {
-      line-height: 1.82;
-      font-size: 1.05rem;
+      line-height: 1.75;
+      font-size: 1rem;
     }
 
     .msg.user .msg-body {
-      color: var(--text-dim);
+      font-family: var(--font-body);
+      color: var(--text-muted);
       text-align: right;
       font-style: italic;
-      font-size: 0.95rem;
-      line-height: 1.7;
+      font-size: 0.94rem;
+      line-height: 1.65;
     }
 
     .msg.assistant .msg-body {
-      font-family: var(--serif);
+      font-family: var(--font-body);
       color: var(--text);
     }
 
     /* Markdown within assistant messages */
-    .msg-body p { margin-bottom: 1em; }
+    .msg-body p { margin-bottom: 1.1em; }
     .msg-body p:last-child { margin-bottom: 0; }
-    .msg-body strong { color: var(--accent); font-weight: normal; }
-    .msg-body em { font-style: italic; color: var(--text); }
+
+    .msg-body strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .msg-body em {
+      font-style: italic;
+      color: var(--text);
+    }
 
     .msg-body h1 {
-      font-family: var(--serif);
+      font-family: var(--font-display);
       font-weight: normal;
-      font-size: 1.2rem;
+      font-size: 1.15rem;
       color: var(--accent);
-      letter-spacing: 0.03em;
-      margin: 1.8em 0 0.6em;
+      letter-spacing: 0;
+      margin: 1.6em 0 0.55em;
     }
 
     .msg-body h2 {
-      font-family: var(--serif);
+      font-family: var(--font-display);
       font-weight: normal;
-      font-size: 1.12rem;
+      font-size: 1.08rem;
       color: var(--accent);
-      letter-spacing: 0.04em;
-      margin: 1.75em 0 0.7em;
-      padding-top: 0.25em;
+      letter-spacing: 0;
+      margin: 2em 0 0.75em;
+      padding-top: 0;
     }
 
-    .msg-body h2:first-child { margin-top: 0; padding-top: 0; }
+    .msg-body h2:first-child { margin-top: 0; }
 
     .msg-body h3 {
-      font-family: var(--serif);
-      font-weight: normal;
-      font-size: 0.98rem;
-      color: var(--text-dim);
-      letter-spacing: 0.03em;
-      margin: 1.35em 0 0.55em;
+      font-family: var(--font-body);
+      font-weight: 500;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      letter-spacing: 0.02em;
+      margin: 1.4em 0 0.5em;
     }
 
     .msg-body ul, .msg-body ol {
-      padding-left: 1.45em;
-      margin-bottom: 1.1em;
+      padding-left: 1.35em;
+      margin-bottom: 1.15em;
     }
 
     .msg-body li {
-      margin-bottom: 0.55em;
-      padding-left: 0.15em;
+      margin-bottom: 0.5em;
+      padding-left: 0.1em;
     }
 
     .msg-body li:last-child { margin-bottom: 0; }
 
     /* Recommendation entries: title / category / explanation */
     .msg-body ol > li {
-      margin-bottom: 1.65em;
-      line-height: 1.78;
+      margin-bottom: 2rem;
+      line-height: 1.72;
+      padding-bottom: 0.15rem;
     }
 
     .msg-body ol > li > strong:first-child {
       display: block;
-      color: var(--accent);
-      font-size: 1.03em;
-      margin-bottom: 0.3em;
-      letter-spacing: 0.02em;
+      font-family: var(--font-display);
+      color: var(--text);
+      font-weight: normal;
+      font-size: 1.05rem;
+      margin-bottom: 0.35em;
+      letter-spacing: 0;
     }
 
     .msg-body ol > li > em,
     .msg-body ol > li > p > em:only-child {
       display: block;
-      font-family: var(--sans);
-      font-size: 0.72rem;
+      font-family: var(--font-body);
+      font-size: 0.75rem;
       font-style: normal;
-      letter-spacing: 0.1em;
-      text-transform: lowercase;
-      color: var(--text-dim);
-      margin-bottom: 0.55em;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      text-transform: none;
+      color: var(--text-muted);
+      margin-bottom: 0.65em;
     }
 
-    .msg-body hr { border: none; border-top: 1px solid var(--border); margin: 1.6em 0; }
-    .msg-body blockquote {
-      border-left: 2px solid var(--accent-dim);
-      padding-left: 1em;
-      color: var(--text-dim);
-      margin: 0.5em 0;
+    .msg-body hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 1.75em 0;
     }
+
+    .msg-body blockquote {
+      border-left: 1px solid var(--border);
+      padding-left: 1em;
+      color: var(--text-muted);
+      margin: 0.75em 0;
+    }
+
     .msg-body code {
       font-family: monospace;
       font-size: 0.85em;
-      color: var(--text-dim);
+      color: var(--text-muted);
       background: var(--bg-3);
       padding: 0.1em 0.3em;
       border-radius: 2px;
@@ -288,16 +319,16 @@
       background: var(--bg-2);
       border: 1px solid var(--border);
       color: var(--text);
-      font-family: var(--serif);
-      font-size: 0.92rem;
-      line-height: 1.7;
+      font-family: var(--font-body);
+      font-size: 0.94rem;
+      line-height: 1.65;
       padding: 0.6rem 0.9rem;
       border-radius: 2px;
       resize: none;
       outline: none;
       min-height: 42px;
       max-height: 150px;
-      transition: border-color 0.15s;
+      transition: border-color 0.15s, box-shadow 0.15s;
     }
 
     #user-input:focus,
@@ -308,7 +339,7 @@
     }
 
     #user-input::placeholder {
-      color: var(--text-dim);
+      color: var(--text-faint);
       font-style: italic;
     }
 
@@ -319,21 +350,25 @@
 
     #send-btn {
       background: transparent;
-      border: 1px solid var(--accent-dim);
-      color: var(--accent);
-      font-family: var(--serif);
-      font-size: 0.82rem;
-      letter-spacing: 0.06em;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      letter-spacing: 0.03em;
       padding: 0 1.1rem;
       height: 42px;
       cursor: pointer;
       border-radius: 2px;
       white-space: nowrap;
-      transition: background 0.15s, color 0.15s;
+      transition: border-color 0.15s, color 0.15s;
       flex-shrink: 0;
     }
 
-    #send-btn:hover:not(:disabled) { background: var(--accent-dim); color: var(--bg); }
+    #send-btn:hover:not(:disabled) {
+      border-color: var(--accent-dim);
+      color: var(--accent);
+    }
+
     #send-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 
     /* ── Sidebar ────────────────────────────────── */
@@ -349,60 +384,60 @@
     .sidebar-head {
       padding: 0.85rem 1.2rem;
       border-bottom: 1px solid var(--border);
-      font-family: var(--serif);
-      font-size: 0.78rem;
-      font-weight: normal;
+      font-family: var(--font-body);
+      font-size: 0.72rem;
+      font-weight: 500;
       letter-spacing: 0.04em;
-      color: var(--accent);
+      text-transform: uppercase;
+      color: var(--text-faint);
     }
 
     #notes-list {
       flex: 1;
       overflow-y: auto;
-      padding: 1rem 1rem 1.2rem;
+      padding: 0.5rem 1.2rem 1.2rem;
       display: flex;
       flex-direction: column;
-      gap: 0.55rem;
+      gap: 0;
     }
 
     #notes-list::-webkit-scrollbar { width: 3px; }
     #notes-list::-webkit-scrollbar-thumb { background: var(--border); }
 
     #notes-list .empty-state {
-      font-family: var(--serif);
+      font-family: var(--font-body);
       font-style: italic;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       color: var(--text-faint);
-      line-height: 1.7;
-      padding: 0.2rem 0.1rem;
+      line-height: 1.65;
+      padding: 0.5rem 0;
     }
 
     .note-entry {
       display: flex;
       align-items: flex-start;
-      gap: 0.65rem;
-      padding: 0.6rem 0.65rem;
-      background: var(--bg-2);
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      animation: fadeIn 0.25s ease;
+      gap: 0.6rem;
+      padding: 0.7rem 0;
+      border-bottom: 1px solid var(--border);
+      animation: fadeIn 0.2s ease;
     }
+
+    .note-entry:last-child { border-bottom: none; }
 
     .note-index {
       flex-shrink: 0;
-      width: 1.35rem;
-      font-family: var(--sans);
-      font-size: 0.6rem;
-      letter-spacing: 0.06em;
-      color: var(--accent-dim);
-      padding-top: 0.2rem;
-      text-align: center;
+      width: 1.25rem;
+      font-family: var(--font-body);
+      font-size: 0.58rem;
+      color: var(--text-faint);
+      padding-top: 0.15rem;
+      text-align: left;
     }
 
     .note-title {
-      font-family: var(--serif);
-      font-size: 0.82rem;
-      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      color: var(--text-muted);
       line-height: 1.5;
     }
 
