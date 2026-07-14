@@ -365,24 +365,8 @@
 // ── Config & state ───────────────────────────────────────────────────────────
 const STORAGE_KEY  = 'taste_profiler_v1';
 
-// Pre-established profile entries — always present regardless of session state
-const PROFILE_SEED = [
-  'Can — Tago Mago',
-  'Neu!',
-  'Harmonia — Musik von Harmonia',
-  'The Sopranos',
-  'Mad Men',
-  'Neon Genesis Evangelion',
-  'Chinatown',
-  'Apollo 11 (2019)',
-  'Adam Curtis',
-  'DJ Sprinkles — Midtown 120 Blues',
-  'Nick Warren',
-  'Modest Mouse',
-];
-
 let messages  = [];
-let named     = [...PROFILE_SEED];  // seed with known profile items
+let named     = [];
 let loading   = false;
 
 // ── DOM refs ─────────────────────────────────────────────────────────────────
