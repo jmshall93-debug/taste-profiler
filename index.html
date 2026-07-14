@@ -364,6 +364,7 @@
 
 // ── Config & state ───────────────────────────────────────────────────────────
 const STORAGE_KEY  = 'taste_profiler_v1';
+const OPENING_GREETING = "Hello there! I'm the Taste Profiler — a soul companion for mapping the territory of your taste. Tell me something you love, and we'll begin to draw the map. What's been on your mind lately — a film, a record, a place, an idea?";
 
 let messages  = [];
 let named     = [];
@@ -380,6 +381,12 @@ const notesList  = document.getElementById('notes-list');
 // ── Marked config ────────────────────────────────────────────────────────────
 marked.setOptions({ breaks: true });
 
+function showOpeningGreeting() {
+  messages = [{ role: 'assistant', content: OPENING_GREETING }];
+  renderMessage('assistant', OPENING_GREETING);
+  saveSession();
+}
+
 // ── Startup ──────────────────────────────────────────────────────────────────
 (function init() {
   const saved = tryLoadSession();
@@ -392,7 +399,7 @@ marked.setOptions({ breaks: true });
     renderNamed();
     detectMode();
   } else {
-    call(null);
+    showOpeningGreeting();
   }
 
   userInputEl.focus();
@@ -421,7 +428,7 @@ clearBtn.addEventListener('click', () => {
   modeBadge.textContent = 'Collection';
   modeBadge.classList.remove('reading');
   localStorage.removeItem(STORAGE_KEY);
-  call(null);
+  showOpeningGreeting();
 });
 
 // ── Input handling ───────────────────────────────────────────────────────────
@@ -449,7 +456,7 @@ function submit() {
 
 // ── API call with streaming ───────────────────────────────────────────────────
 async function call(userText) {
-  if (loading) return;
+  if (!userText || loading) return;
   loading = true;
   sendBtn.disabled = true;
 
