@@ -261,26 +261,31 @@
 
     /* ── Sidebar ────────────────────────────────── */
     #sidebar {
-      width: 256px;
+      width: 288px;
       flex-shrink: 0;
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      background: var(--bg);
     }
 
     .sidebar-head {
-      padding: 0.75rem 1.1rem;
+      padding: 0.85rem 1.2rem;
       border-bottom: 1px solid var(--border);
-      font-size: 0.65rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--text-dim);
+      font-family: var(--serif);
+      font-size: 0.78rem;
+      font-weight: normal;
+      letter-spacing: 0.04em;
+      color: var(--accent);
     }
 
     #notes-list {
       flex: 1;
       overflow-y: auto;
-      padding: 1.1rem;
+      padding: 1rem 1rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
     }
 
     #notes-list::-webkit-scrollbar { width: 3px; }
@@ -291,29 +296,36 @@
       font-style: italic;
       font-size: 0.82rem;
       color: var(--text-faint);
-      line-height: 1.9;
+      line-height: 1.7;
+      padding: 0.2rem 0.1rem;
     }
 
     .note-entry {
       display: flex;
-      align-items: baseline;
-      gap: 0.5rem;
-      margin-bottom: 0.55rem;
-      font-family: var(--serif);
-      font-size: 0.82rem;
-      font-style: italic;
-      color: var(--text-dim);
-      line-height: 1.5;
+      align-items: flex-start;
+      gap: 0.65rem;
+      padding: 0.65rem 0.7rem;
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 3px;
       animation: fadeIn 0.3s ease;
     }
 
-    .note-dot {
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-      background: var(--accent-dim);
+    .note-index {
       flex-shrink: 0;
-      margin-top: 0.5em;
+      width: 1.35rem;
+      font-size: 0.62rem;
+      letter-spacing: 0.06em;
+      color: var(--accent-dim);
+      padding-top: 0.15rem;
+      text-align: center;
+    }
+
+    .note-title {
+      font-family: var(--serif);
+      font-size: 0.8rem;
+      color: var(--text);
+      line-height: 1.45;
     }
 
     @keyframes fadeIn {
@@ -350,9 +362,9 @@
     </div>
 
     <div id="sidebar">
-      <div class="sidebar-head">What's been named</div>
+      <div class="sidebar-head">Your taste map</div>
       <div id="notes-list">
-        <p class="empty-state">The map fills<br>as you speak.<br><br>What you love<br>becomes the<br>territory.</p>
+        <p class="empty-state">Your map will take shape as the conversation unfolds.</p>
       </div>
     </div>
   </div>
@@ -396,7 +408,7 @@ function showOpeningGreeting() {
     saved.messages.forEach(m => {
       if (m.role !== 'system') renderMessage(m.role, m.content, false);
     });
-    renderNamed();
+    rebuildNamedFromMessages();
     detectMode();
   } else {
     showOpeningGreeting();
@@ -424,7 +436,7 @@ clearBtn.addEventListener('click', () => {
   messages = [];
   named    = [];
   messagesEl.innerHTML = '';
-  notesList.innerHTML  = '<p class="empty-state">The map fills<br>as you speak.<br><br>What you love<br>becomes the<br>territory.</p>';
+  notesList.innerHTML  = '<p class="empty-state">Your map will take shape as the conversation unfolds.</p>';
   modeBadge.textContent = 'Collection';
   modeBadge.classList.remove('reading');
   localStorage.removeItem(STORAGE_KEY);
@@ -511,7 +523,7 @@ async function call(userText) {
     }
 
     messages.push({ role: 'assistant', content: full });
-    extractNamed(full);
+    mergeNamedFromText(full);
     detectMode(full);
     saveSession();
 
@@ -580,23 +592,100 @@ function renderError(msg) {
   messagesEl.appendChild(el);
 }
 
-// ── Sidebar: extract **bold** items from AI responses ─────────────────────────
-function extractNamed(text) {
-  const matches = [...text.matchAll(/\*\*([^*]{2,50})\*\*/g)].map(m => m[1].trim());
+// ── Sidebar: build taste map from assistant responses ───────────────────────
+const EXCLUDED_LABELS = new Set([
+  'soul reading',
+  'suggestions for exploration',
+  'suggestions',
+  'underlying threads',
+  'collection mode',
+  'reading & discovery mode',
+  'reading and discovery mode',
+]);
+
+function normalizeMapTitle(raw) {
+  let title = raw.trim()
+    .replace(/\*\*/g, '')
+    .replace(/"/g, '')
+    .replace(/\s*\([^)]*\)\s*$/i, '')
+    .replace(/[:;.,!?]+$/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  const directed = title.match(/^(.+?)\s+directed by\s+(.+)$/i);
+  if (directed) title = directed[1].trim();
+
+  return title;
+}
+
+function isExcludedLabel(title) {
+  const key = title.toLowerCase().replace(/[:;.,!?]+$/g, '').trim();
+  return !key || key.length < 3 || EXCLUDED_LABELS.has(key);
+}
+
+function parseMapItems(text) {
+  const items = [];
+  const lines = text.split('\n');
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+
+    const numbered = trimmed.match(
+      /^\d+\.\s+(?:\*\*(.+?)\*\*|"(.+?)"(?:\s+by\s+[^"]+)?|([^:(]+?))(?:\s*\([^)]+\))?\s*:/
+    );
+    if (numbered) {
+      const raw = numbered[1] || numbered[2] || numbered[3];
+      const title = normalizeMapTitle(raw);
+      if (!isExcludedLabel(title)) items.push(title);
+      continue;
+    }
+
+    const boldOnly = [...trimmed.matchAll(/\*\*([^*]+)\*\*/g)].map(m => m[1].trim());
+    for (const raw of boldOnly) {
+      const title = normalizeMapTitle(raw);
+      if (!isExcludedLabel(title)) items.push(title);
+    }
+  }
+
+  return items;
+}
+
+function mergeNamedFromText(text) {
+  const incoming = parseMapItems(text);
+  if (incoming.length === 0) return;
+
   let changed = false;
-  for (const m of matches) {
-    if (!named.includes(m) && m.length > 2) {
-      named.push(m);
+  for (const title of incoming) {
+    const exists = named.some(n => n.toLowerCase() === title.toLowerCase());
+    if (!exists) {
+      named.push(title);
       changed = true;
     }
   }
+
   if (changed) renderNamed();
 }
 
+function rebuildNamedFromMessages() {
+  named = [];
+  for (const message of messages) {
+    if (message.role !== 'assistant') continue;
+    mergeNamedFromText(message.content);
+  }
+  renderNamed();
+}
+
 function renderNamed() {
-  if (named.length === 0) return;
-  notesList.innerHTML = named.slice(-40).map(n =>
-    `<div class="note-entry"><div class="note-dot"></div><span>${escHtml(n)}</span></div>`
+  if (named.length === 0) {
+    notesList.innerHTML = '<p class="empty-state">Your map will take shape as the conversation unfolds.</p>';
+    return;
+  }
+
+  const visible = named.slice(-40);
+  const offset = named.length - visible.length;
+  notesList.innerHTML = visible.map((title, index) =>
+    `<div class="note-entry"><div class="note-index">${offset + index + 1}</div><div class="note-title">${escHtml(title)}</div></div>`
   ).join('');
 }
 
