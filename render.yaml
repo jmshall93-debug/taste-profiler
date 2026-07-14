@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: taste-profiler
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false

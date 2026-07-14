@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recommendations — Soul Harmony Guide</title>
+  <style>
+    :root {
+      --bg:        #0e0d0b;
+      --bg-2:      #161410;
+      --bg-3:      #201e19;
+      --border:    #38332c;
+      --text:      #ddd0b6;
+      --text-dim:  #a8967c;
+      --text-faint:#6e6050;
+      --accent:    #d4a85c;
+      --accent-dim:#8a6e3a;
+      --serif:     Georgia, 'Times New Roman', serif;
+      --sans:      -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--serif);
+      font-size: 16px;
+      line-height: 1.8;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Header ─────────────────────────────────── */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 3rem 2rem 2.5rem;
+      text-align: center;
+    }
+
+    header .ornament {
+      font-size: 1rem;
+      color: var(--accent-dim);
+      letter-spacing: 0.4em;
+      opacity: 0.5;
+      margin-bottom: 1.4rem;
+    }
+
+    header h1 {
+      font-size: 1.6rem;
+      font-weight: normal;
+      color: var(--accent);
+      letter-spacing: 0.06em;
+      margin-bottom: 0.4rem;
+    }
+
+    header p {
+      font-size: 0.82rem;
+      font-style: italic;
+      color: var(--text-dim);
+    }
+
+    /* ── Layout ─────────────────────────────────── */
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 2rem 6rem;
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 0 4rem;
+      align-items: start;
+    }
+
+    /* ── Nav ────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 2.5rem;
+      padding-top: 3rem;
+    }
+
+    nav .nav-label {
+      font-family: var(--sans);
+      font-size: 0.62rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      margin-bottom: 1rem;
+    }
+
+    nav a {
+      display: block;
+      font-family: var(--sans);
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      text-decoration: none;
+      padding: 0.2rem 0;
+      transition: color 0.15s;
+      letter-spacing: 0.02em;
+    }
+
+    nav a:hover { color: var(--accent); }
+
+    nav .nav-sub {
+      padding-left: 0.8rem;
+      font-size: 0.72rem;
+      color: var(--text-faint);
+    }
+
+    nav .nav-sub:hover { color: var(--text-dim); }
+    nav .nav-label { color: var(--text-faint); }
+
+    nav hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0.8rem 0;
+    }
+
+    /* ── Main content ───────────────────────────── */
+    main {
+      padding-top: 3rem;
+    }
+
+    /* ── Sections ───────────────────────────────── */
+    section {
+      margin-bottom: 4rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-header h2 {
+      font-size: 0.72rem;
+      font-family: var(--sans);
+      font-weight: normal;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .section-header .section-count {
+      font-family: var(--sans);
+      font-size: 0.65rem;
+      color: var(--text-faint);
+    }
+
+    /* ── Subsections ────────────────────────────── */
+    .subsection {
+      margin-bottom: 2.5rem;
+    }
+
+    .subsection-label {
+      font-family: var(--sans);
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 1.4rem;
+    }
+
+    /* ── Entry ──────────────────────────────────── */
+    .entry {
+      margin-bottom: 2rem;
+      padding-left: 1rem;
+      border-left: 1px solid var(--border);
+      transition: border-color 0.2s;
+    }
+
+    .entry:hover {
+      border-color: var(--accent-dim);
+    }
+
+    .entry-title {
+      font-size: 0.95rem;
+      font-weight: normal;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+      margin-bottom: 0.5rem;
+      line-height: 1.4;
+    }
+
+    .entry-body {
+      font-size: 0.92rem;
+      color: var(--text);
+      line-height: 1.95;
+    }
+
+    .entry-body em {
+      color: var(--accent);
+      font-style: italic;
+    }
+
+    /* ── Nietzsche reading order ────────────────── */
+    .reading-order {
+      list-style: none;
+      counter-reset: steps;
+      margin-top: 0.8rem;
+    }
+
+    .reading-order li {
+      counter-increment: steps;
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      font-size: 0.88rem;
+      color: var(--text);
+      line-height: 1.8;
+    }
+
+    .reading-order li::before {
+      content: counter(steps);
+      font-family: var(--sans);
+      font-size: 0.65rem;
+      color: var(--accent-dim);
+      background: var(--bg-3);
+      border: 1px solid var(--border);
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 0.2em;
+    }
+
+    .reading-order .step-title {
+      color: var(--text);
+    }
+
+    .secondary-note {
+      margin-top: 1rem;
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      font-style: italic;
+      padding-left: 1rem;
+      border-left: 1px solid var(--border);
+    }
+
+    /* ── Places region header ───────────────────── */
+    .region-header {
+      font-family: var(--sans);
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin: 2rem 0 1.4rem;
+    }
+
+    .region-header:first-child {
+      margin-top: 0;
+    }
+
+    /* ── Footer ─────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      text-align: center;
+      font-family: var(--sans);
+      font-size: 0.68rem;
+      color: var(--text-faint);
+      letter-spacing: 0.06em;
+    }
+
+    /* ── Responsive ─────────────────────────────── */
+    @media (max-width: 680px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+      nav {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="ornament">· · ·</div>
+  <h1>Recommendations</h1>
+  <p>Soul Harmony Guide &mdash; March 2026</p>
+</header>
+
+<div class="container">
+
+  <!-- ── Navigation ──────────────────────────────── -->
+  <nav>
+    <div class="nav-label">Contents</div>
+    <a href="#film">Film</a>
+    <a href="#essay-film" class="nav-sub">Essay &amp; Documentary</a>
+    <hr>
+    <a href="#books">Books</a>
+    <hr>
+    <a href="#music">Music</a>
+    <a href="#ambient" class="nav-sub">Ambient / Drone</a>
+    <a href="#sacramental" class="nav-sub">Sacramental</a>
+    <a href="#sacred" class="nav-sub">Sacred / Ancient</a>
+    <a href="#african" class="nav-sub">African / World</a>
+    <hr>
+    <a href="#ideas">Thinkers &amp; Ideas</a>
+    <a href="#nietzsche" class="nav-sub">Nietzsche</a>
+    <hr>
+    <a href="#art">Visual Art</a>
+    <hr>
+    <a href="#places">Places</a>
+    <a href="#uk" class="nav-sub">UK &amp; North Atlantic</a>
+    <a href="#europe" class="nav-sub">Continental Europe</a>
+    <a href="#spain" class="nav-sub">Spain</a>
+    <a href="#archaeological" class="nav-sub">Archaeological</a>
+    <a href="#urban" class="nav-sub">Urban</a>
+  </nav>
+
+  <!-- ── Main ────────────────────────────────────── -->
+  <main>
+
+    <!-- Film -->
+    <section id="film">
+      <div class="section-header">
+        <h2>Film</h2>
+        <span class="section-count">3</span>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">Stalker &mdash; Andrei Tarkovsky (1979)</div>
+        <div class="entry-body">A man guides two others into a forbidden zone where the laws of reality soften and something like a wish-granting presence waits at the centre. Tarkovsky shoots in long, unbroken takes through ruined industrial landscapes that become inexplicably sacred &mdash; this is Twin Peaks' Black Lodge and the Spinozist wilderness and the infinite veil made into cinema. The Zone never explains itself. You will feel it like a physical pressure.</div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">Picnic at Hanging Rock &mdash; Peter Weir (1975)</div>
+        <div class="entry-body">A group of schoolgirls walk into an ancient volcanic formation in Australia on Valentine's Day and some of them do not return. Weir never explains what happened. The landscape &mdash; vast, indifferent, humming with something pre-human &mdash; is the protagonist. It has the Twin Peaks quality of mystery that must not be resolved, combined with the wilderness sublime you're reaching toward.</div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">The Tree of Life &mdash; Terrence Malick (2011)</div>
+        <div class="entry-body">It opens with the formation of the cosmos and the appearance of the first life &mdash; a cinematic depiction of abiogenesis. It then narrows to a single family in 1950s Texas and holds those two scales &mdash; the cosmic and the intimate &mdash; in the same frame, drenched in golden light. Malick is doing visually what Spinoza did philosophically. You have likely avoided this; don't.</div>
+      </div>
+    </section>
+
+    <!-- Essay Film -->
+    <section id="essay-film">
+      <div class="section-header">
+        <h2>Essay Film &amp; Documentary</h2>
+        <span class="section-count">2</span>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">Sans Soleil &mdash; Chris Marker (1983)</div>
+        <div class="entry-body">A cameraman's letters, read aloud by a woman's voice, moving between Japan, Guinea-Bissau, and Iceland. It's about memory, time, and what images do to reality &mdash; whether a photograph preserves a moment or replaces it. Marker was asking the questions Baudrillard was writing about at exactly the same time, but through footage of street festivals, airport waiting rooms, and a cat cemetery in Tokyo. The essay film that Adam Curtis is working in the shadow of. Quiet, strange, and completely unlike anything else.</div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">Nostalgia for the Light &mdash; Patricio Guzm&aacute;n (2010)</div>
+        <div class="entry-body">In the Atacama desert &mdash; the driest place on Earth &mdash; astronomers point telescopes at the origins of the universe while women nearby search the same ground for the bones of those disappeared by Pinochet. Guzm&aacute;n holds both searches in the same frame without forcing them together. Deep time, archaeology, the cosmos, political memory, the sublime and the horrific occupying the same landscape. Connects directly to the Apollo 11 interest in the vast scale of human endeavour, and to the hidden-knowledge thread &mdash; except here what's buried is not ancient but recent, and not yet found.</div>
+      </div>
+    </section>
+
+    <!-- Books -->
+    <section id="books">
+      <div class="section-header">
+        <h2>Books</h2>
+        <span class="section-count">6</span>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">The Passion According to G.H. &mdash; Clarice Lispector</div>
+        <div class="entry-body">A Brazilian woman, alone in her apartment, crushes a cockroach and has a complete dissolution of the self into pure immanence. This sounds absurd; it is devastating. Lispector writes prose like consciousness under a microscope &mdash; psychedelic without chemicals, Spinozist without argument, the abiogenesis moment rendered in language. The closest thing in literature to what you described as "the infinite veil."</div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">The Living Mountain &mdash; Nan Shepherd</div>
+        <div class="entry-body">Written in the 1940s about the Cairngorms &mdash; not the Alps, not the Rockies, but mountains you could stand on within a few hours of wherever you are. Shepherd goes into them not to conquer but to be taught. She writes about granite and cold water and the particular quality of mountain light with the precision of a mystic and the discipline of a scientist. This is the book that might change your relationship to the landscape you actually live near.</div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">The Rings of Saturn &mdash; W.G. Sebald</div>
+        <div class="entry-body">A man walks through Suffolk &mdash; the most flat, managed, domesticated English landscape imaginable &mdash; and finds it saturated with hidden history, ruins, catastrophe, the past refusing to stay buried. Sebald writes about the Silk Road, the herring trade, Thomas Browne, colonial violence, all braided together in long melancholy paragraphs. He does for landscape what Baudrillard does for culture; the ordinary English countryside becomes archaeological, uncanny.</div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">Underland &mdash; Robert Macfarlane</div>
+        <div class="entry-body">Macfarlane goes underground &mdash; into caves, ice shelves, mycorrhizal networks, Chernobyl's exclusion zone, ancient burial chambers &mdash; and writes about deep time, hidden knowledge, the archaeology of the not-yet-discovered. Ancient wisdom, artefacts, the earth as archive. He has also spent years finding the wilderness that exists, quietly, in Britain.</div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">The Unconsoled &mdash; Kazuo Ishiguro</div>
+        <div class="entry-body">Not his famous one. A pianist arrives in a European city and the world keeps slipping its moorings &mdash; obligations multiply, rooms lead to impossible places, time behaves wrongly. The infinite veil as literary form. More unsettling and strange than anything he's known for.</div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">The Masnavi &mdash; Rumi (trans. Jawid Mojaddedi)</div>
+        <div class="entry-body">Not the airport Rumi. The actual <em>Masnavi</em> is Dostoevskian in scope &mdash; stories within stories, philosophy and grief and divine longing all braided. Ancient wisdom that has genuinely earned the name. <em>The Brothers Karamazov</em>'s spiritual wrestling in a different tradition.</div>
+      </div>
+    </section>
+
+    <!-- Music -->
+    <section id="music">
+      <div class="section-header">
+        <h2>Music</h2>
+        <span class="section-count">14</span>
+      </div>
+
+      <div class="subsection" id="ambient">
+        <div class="subsection-label">Ambient / Electronic / Drone</div>
+
+        <div class="entry">
+          <div class="entry-title">Grouper &mdash; Dragging a Dead Deer Up a Hill</div>
+          <div class="entry-body">Folk-drone that sounds like someone singing from underwater &mdash; or from the other side of the membrane. Sits in the same territory as Talk Talk's <em>Laughing Stock</em> but colder and more solitary, as though the sacred has been stripped of warmth and only the silence remains. If Talk Talk opened something and Boards of Canada gave you the ache of half-remembered things, Grouper is what lives between them.</div>
+        </div>
+
+        <div class="entry">
+          <div class="entry-title">Stars of the Lid &mdash; And Their Refinement of the Decline</div>
+          <div class="entry-body">Orchestral ambient that does what Talk Talk does in a different register &mdash; vast, slow accumulation, then something emotionally overwhelming arriving without warning. The wilderness you're longing for, in sound.</div>
+        </div>
+
+        <div class="entry">
+          <div class="entry-title">Lustmord &mdash; Heresy</div>
+          <div class="entry-body">Dark ambient at its most geological. Where Boards of Canada makes you nostalgic for a lost childhood, Lustmord makes you feel the age of rock itself. The cold sublime. Something that genuinely doesn't care about you.</div>
+        </div>
+      </div>
+
+      <div class="subsection" id="sacramental">
+        <div class="subsection-label">Sacramental / Ritual / Light Percussion</div>
+
+        <div class="entry">
+          <div class="entry-title">Jon Hassell &amp; Brian Eno &mdash; Possible Musics (1980)</div>
+          <div class="entry-body">"Fourth World" music &mdash; ambient textures with organic, lightly tribal percussion from African and Indonesian traditions. Processed trumpet drifts over soft, repetitive drumming that never resolves. The space it creates is genuinely sacred in character. His solo record <em>Dream Theory in Malaya</em> (1981) goes deeper into this territory. These recordings influenced almost every ambient and electronic artist who came after.</div>
+        </div>
+
+        <div class="entry">
+          <div class="entry-title">Midori Takada &mdash; Through the Looking Glass (1983)</div>
+          <div class="entry-body">Japanese percussionist, solo marimba and hand drums. The most direct answer to "peaceful, almost ambient, with light rhythmic drumming." The marimba creates resonant, sustained tones that blur into drone; the percussion underneath is soft, patient, unhurried. Sounds ancient without imitating anything specific.</div>
+        </div>
+
+        <div class="entry">
+          <div class="entry-title">Alice Coltrane &mdash; World Spirituality Classics Vol. 1</div>
+          <div class="entry-body">Made for her Vedantic ashram in California &mdash; recordings never intended for commercial release. Organ drones, light hand percussion, devotional vocals. Genuinely sacramental in the most direct sense: music made <em>as</em> a spiritual practice, not music <em>about</em> one. <em>Turiya Sings</em> (2019) is the companion piece &mdash; her voice alone over organ.</div>
+        </div>
+
+        <div class="entry">
+          <div class="entry-title">Popol Vuh &mdash; Hosianna Mantra (1972)</div>
+          <div class="entry-body">Werner Herzog's composers. Female soprano, organ, oboe, and tabla played softly throughout. It sounds like medieval sacred music being played in a room where the walls have dissolved. <em>Letzte Tage &mdash; Letzte N&auml;chte</em> (1976) is more ambient and equally beautiful.</div>
+        </div>
+
+        <div class="entry">
+          <div class="entry-title">Laraaji &mdash; Day of Radiance (1980)</div>
+          <div class="entry-body">Produced by Eno as part of his <em>Ambient</em> series. Laraaji plays electric zither in a state of sustained spiritual practice &mdash; a genuine contemplative, not a performer playing at it. The instrument creates shimmering, overlapping tones; the rhythm is light and cyclical. Peaceful without being inert.</div>
+        </div>
+
+        <div class="entry">
+          <div class="entry-title">Hariprasad Chaurasia</div>
+          <div class="entry-body">Indian bansuri (bamboo flute) master. The bansuri's pure tone is the closest thing to a human voice without being one &mdash; intimate, meditative, deeply spiritual. The slow <em>alap</em> sections build into gentle rhythmic interplay with the tabla. Start with <em>Call of the Valley</em> (1967) &mdash; recorded with Shivkumar Sharma on santoor.</div>
+        </div>
+
+        <div class="entry">
+          <div class="entry-title">Steve Reich &mdash; Music for 18 Musicians (1976)</div>
+          <div class="entry-body">Minimal patterns on mallet instruments and voices, cycling in and out of phase for over an hour. Light, constant, meditative pulse. The most secular item in this section but perhaps the most purely trance-inducing.</div>
+        </div>
+      </div>
+
+      <div class="subsection" id="sacred">
+        <div class="subsection-label">Sacred / Ancient</div>
+
+        <div class="entry">
+          <div class="entry-title">Jan Garbarek &mdash; Officium</div>
+          <div class="entry-body">Norwegian saxophonist playing across the Hilliard Ensemble's medieval sacred polyphony. It sounds like the Briggs scene feels &mdash; ordinary space suddenly vast, a presence arriving uninvited. Ancient and contemporary and genuinely strange.</div>
+        </div>
+      </div>
+
+      <div class="subsection" id="african">
+        <div class="subsection-label">African Spiritual / Percussive / World</div>
+
+        <div class="entry">
+          <div class="entry-title">Maalem Mahmoud Guinia &mdash; Colours of the Night</div>
+          <div class="entry-body">Gnawa &mdash; a Moroccan healing tradition descended from enslaved West Africans. The guembri (bass lute) creates a deep, woody, almost subsonic tone layered over iron castanets and chanting. The ceremonies last all night and are designed to invoke spirits and enter trance states. Music made specifically to thin the membrane. <em>The Trance of Seven Colours</em> (with Pharoah Sanders) is the more accessible companion.</div>
+        </div>
+
+        <div class="entry">
+          <div class="entry-title">Mulatu Astatke &mdash; Ethio Jazz (1974)</div>
+          <div class="entry-body">Ethiopian jazz from the 1960s&ndash;70s, fusing jazz and Latin music with the ancient Ethiopian pentatonic scale. Simultaneously ancient and modern, deeply minor-key, hypnotic, slightly wrong in a way that keeps pulling you back. <em>Ethiopiques Vol. 4</em> is the essential collection. Start there, then the broader <em>Ethiopiques</em> series (30+ volumes of archival recordings).</div>
+        </div>
+
+        <div class="entry">
+          <div class="entry-title">Hailu Mergia &mdash; Hailu Mergia &amp; His Classical Instrument (1985)</div>
+          <div class="entry-body">Ethiopian keyboardist playing ancient Ethiopian melodies alone on accordion. Modal, slow, deeply interior. The accordion transforms the Ethiopian pentatonic scale into something that sounds like it's coming from inside a very old building.</div>
+        </div>
+
+        <div class="entry">
+          <div class="entry-title">Tinariwen &mdash; Amassakoul (2004)</div>
+          <div class="entry-body">Tuareg nomads from the Saharan desert playing electric guitars. The music descends directly from the same West African roots as American blues &mdash; hearing it, you understand viscerally that the blues was always desert music, always music about immense empty space. Melancholy, hypnotic, vast. <em>Aman Iman</em> (2007) follows naturally.</div>
+        </div>
+
+        <div class="entry">
+          <div class="entry-title">Baka Forest People &mdash; Heart of the Forest</div>
+          <div class="entry-body">Polyphonic forest singing from Cameroon and Congo &mdash; layered, interlocking voices that sound like the forest thinking. Creates harmonics that no single voice produces. Music that sounds like emergence, like abiogenesis in sound.</div>
+        </div>
+
+        <div class="entry">
+          <div class="entry-title">Konono N&deg;1 &mdash; Congotronics (2004)</div>
+          <div class="entry-body">Electric thumb piano amplified through handmade microphones built from car parts, run through distorted PA systems. Ancient ritual music processed through broken electronics &mdash; lo-fi, buzzing, distorted, relentlessly hypnotic. The raw material that artists like Bj&ouml;rk and Four Tet have circled around for years.</div>
+        </div>
+
+        <div class="entry">
+          <div class="entry-title">Nusrat Fateh Ali Khan &mdash; The Last Prophet (1994)</div>
+          <div class="entry-body">Pakistani Sufi qawwali &mdash; a direct cousin of Gnawa, both descended from the same West African spiritual music carried along trade routes. The WOMAD concert recordings. Start with the opening of disc one &mdash; a slow, extended <em>alap</em> that builds with extraordinary patience. The most sacramental music ever committed to tape.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Thinkers -->
+    <section id="ideas">
+      <div class="section-header">
+        <h2>Thinkers &amp; Ideas</h2>
+        <span class="section-count">3 + Nietzsche</span>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">Teilhard de Chardin &mdash; The Phenomenon of Man</div>
+        <div class="entry-body">A Jesuit palaeontologist who spent his life digging up ancient bones in China and Central Asia and concluded that evolution, abiogenesis, and the sacred were a single phenomenon. He mapped consciousness onto the cosmos &mdash; the universe slowly becoming aware of itself. Condemned by the Church and dismissed by some scientists, which is always a promising sign. Spinoza with deep time added and the smell of excavation sites on it.</div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">Simone Weil</div>
+        <div class="entry-body">Philosopher, mystic, activist. Her concept of <em>decreation</em> &mdash; the self deliberately emptying to become pure attention &mdash; is Spinozism arrived at through suffering rather than reason. <em>Waiting for God</em> is one of the most honest books about the sacred ever written.</div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">Alfred North Whitehead &mdash; Process Philosophy</div>
+        <div class="entry-body">Spinozism's twentieth-century heir, and the most coherent philosophical framework for what abiogenesis and the Great Filter are actually pointing at. Reality as process rather than substance &mdash; everything alive, everything relational. Strangely underread given how well it fits the current moment.</div>
+      </div>
+
+      <div class="subsection" id="nietzsche" style="margin-top: 2rem;">
+        <div class="subsection-label">Nietzsche &mdash; Suggested Reading Order</div>
+
+        <ol class="reading-order">
+          <li>
+            <div><span class="step-title">The Gay Science</span> &mdash; Start here. Aphoristic, musical, joyful. Section 125 ("The Madman") is where "God is dead" appears in full context &mdash; not triumphant, but terrified. Book IV (<em>Sanctus Januarius</em>) is where his most beautiful thinking lives.</div>
+          </li>
+          <li>
+            <div><span class="step-title">On the Genealogy of Morality</span> &mdash; His finest sustained argument. Three essays on where values come from, the origin of guilt, and the nature of the ascetic ideal. Essay III bridges directly to Baudrillard: the ascetic ideal as civilisation's operating system, meaning manufactured from negation.</div>
+          </li>
+          <li>
+            <div><span class="step-title">Thus Spoke Zarathustra</span> &mdash; Read as poetry, not doctrine. With the above behind you, the eternal recurrence passages and the &Uuml;bermensch sections land as lived challenge rather than ideology. The chapter "On the Vision and the Riddle" is the eternal recurrence at its most visceral.</div>
+          </li>
+          <li>
+            <div><span class="step-title">The Birth of Tragedy</span> <em>(go backwards)</em> &mdash; His first book, written young. The Apollonian/Dionysian distinction maps directly onto your aesthetic life. Twin Peaks holds both. Talk Talk is almost purely Dionysian. Lawrence of Arabia is Apollo in the service of something Dionysian underneath.</div>
+          </li>
+          <li>
+            <div><span class="step-title">Twilight of the Idols + The Antichrist</span> <em>(together, as a coda)</em> &mdash; Short, ferocious, written near the end of his sane life. Every major Western idol tapped and found hollow. Read in a weekend.</div>
+          </li>
+        </ol>
+
+        <div class="secondary-note">Secondary: Alexander Nehamas &mdash; <em>Nietzsche: Life as Literature</em>. Reads Nietzsche as an aesthetic project &mdash; the task of making one's life a work of art.</div>
+      </div>
+    </section>
+
+    <!-- Visual Art -->
+    <section id="art">
+      <div class="section-header">
+        <h2>Visual Art</h2>
+        <span class="section-count">1</span>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">Samuel Palmer</div>
+        <div class="entry-body">Blake's most gifted disciple. In the 1820s, in a small valley in Kent, Palmer painted the English pastoral as though it were on the edge of revelation &mdash; harvest moons burning orange over ancient oaks, shepherds in a light that is not quite natural, the English countryside made numinous and slightly terrifying. He was painting what you described as wanting from the UK landscape: wildness and depth in the place you actually live. His work is in the Ashmolean and the V&amp;A; you could stand in front of it this week.</div>
+      </div>
+    </section>
+
+    <!-- Places -->
+    <section id="places">
+      <div class="section-header">
+        <h2>Places</h2>
+        <span class="section-count">21</span>
+      </div>
+
+      <div class="region-header" id="uk">UK &amp; The North Atlantic</div>
+
+      <div class="entry">
+        <div class="entry-title">The Outer Hebrides &mdash; Lewis &amp; Harris</div>
+        <div class="entry-body">The most atmospheric landscape in the British Isles. The Callanish standing stones on Lewis are older than Stonehenge and almost entirely unvisited &mdash; you can stand among them alone at dawn with no fence, no ticket office, no interpretation board. The beaches at Harris (Luskentyre, Scarista) are white sand and turquoise water under a vast Atlantic sky. The light here is genuinely unlike anywhere else in Britain &mdash; low, shifting, silver. Ancient wisdom literally embedded in stone, and the wilderness you've been reaching for within a two-hour flight.</div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">The Cairngorms</div>
+        <div class="entry-body">Nan Shepherd's mountains. Not dramatic peaks but a genuine high plateau &mdash; the largest arctic-alpine landscape in Britain &mdash; where the weather is serious and the scale is real. Read <em>The Living Mountain</em> first. The book will teach you how to be there rather than merely look at it.</div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">Orkney</div>
+        <div class="entry-body">One of the most archaeologically dense places on Earth, worn lightly. Skara Brae is a Neolithic village older than the pyramids, still emerging from the sand dunes. Maeshowe is a passage tomb aligned precisely with the winter solstice &mdash; 5,000 years ago someone calculated the exact angle. The Ring of Brodgar stands in a flat landscape between two lochs under enormous skies. None of it is heavily managed. You can touch it.</div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">Rannoch Moor</div>
+        <div class="entry-body">The closest thing to genuine desolation in Britain &mdash; a vast, treeless, boggy plateau in the central Highlands, largely roadless, largely unvisited. The train line crosses it; you can get out at Rannoch Station and be standing in something that genuinely does not care about you. The infinite-veil landscape, available without a long-haul flight.</div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">The Faroe Islands</div>
+        <div class="entry-body">Eighteen volcanic islands in the North Atlantic, halfway between Norway and Iceland. Almost no trees. Waterfalls falling directly into the sea. Fog rolling through mountain passes. The grass is an impossible green against black basalt cliffs. A small Norse-speaking culture that has existed in extraordinary isolation. The most otherworldly landscape reachable from the UK &mdash; a few hours by plane &mdash; and almost nothing about it has been flattened by mass tourism yet.</div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">Iceland &mdash; The Interior</div>
+        <div class="entry-body">Not the Blue Lagoon Iceland of package tourism. The Highlands are a lunar desert of black sand and lava fields that feels genuinely pre-human. The geothermal landscape (Landmannalaugar, the obsidian mountains of Hrafntinnusker) has the quality of being somewhere the Earth is still working out what it wants to be. Abiogenesis made landscape. Go in late September when the tourists have left and the northern lights begin.</div>
+      </div>
+
+      <div class="region-header" id="europe">Continental Europe &mdash; Wilderness</div>
+
+      <div class="entry">
+        <div class="entry-title">The Lofoten Islands &mdash; Norway</div>
+        <div class="entry-body">Mountains rising directly from the sea, no foothills, no transition &mdash; the land simply erupts from the water. In deep winter the sun barely rises and the blue hour stretches for hours, a light that is genuinely unlike anything in daytime. The fishing villages are small and old and the landscape overwhelms everything human in it. This is the sublime in the Kantian sense: something that makes you feel the precise limits of the self.</div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">The Romanian Carpathians &mdash; Transylvania</div>
+        <div class="entry-body">One of the last genuinely wild landscapes in Europe. Old-growth forests covering the mountain flanks &mdash; the largest remaining in the continent &mdash; still inhabited by bears, wolves, and lynx. Medieval Saxon villages sitting in valleys where almost nothing has changed since the 13th century. Fortress churches, ancient haymaking traditions, pastoral landscapes that look like paintings of a Europe that elsewhere no longer exists. The simulacrum hasn't arrived yet; the original is still present.</div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">The Albanian Alps &mdash; Valbon&euml;</div>
+        <div class="entry-body">The most unknown and dramatic mountain landscape in Europe. The Accursed Mountains (Bjeshk&euml;t e Namuna) along the Albanian-Montenegrin border are the Dolomites without the tourists or the infrastructure &mdash; steep limestone, deep canyon valleys, traditional guesthouses in villages that only got electricity in recent decades. Genuinely remote and genuinely stunning. Reachable cheaply and easily from the UK; almost nobody goes.</div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">The Bia&#322;owie&#380;a Forest &mdash; Poland / Belarus</div>
+        <div class="entry-body">The last primeval lowland forest in Europe &mdash; the only place on the continent where the original post-glacial forest cover survives intact. European bison still roam it. The trees are enormous and ancient. It has a quality of density and biological depth that no other European forest has: the silence here is inhabited rather than empty, the way a forest sounds when it has never been cleared.</div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">The Dolomites &mdash; Northern Italy</div>
+        <div class="entry-body">Extraordinary pale limestone towers rising above alpine meadows &mdash; the rock itself is made of ancient sea creatures, compressed and uplifted, so that what you are climbing is a coral reef from 250 million years ago. The Ladin people (Ladino-speaking, pre-Roman, culturally distinct) still inhabit the valleys. The right light &mdash; early morning, or storm-approaching &mdash; turns the rock pink and then red in a way that has no equivalent. Geology made sublime.</div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">The Camargue &mdash; Southern France</div>
+        <div class="entry-body">Where the Rh&ocirc;ne meets the Mediterranean: a flat delta of salt marshes, lagoons, and wetland where wild white horses, black bulls, and pink flamingos have coexisted with the same simple human cultures for centuries. A different kind of wilderness &mdash; not vertical and overwhelming but horizontal and strange. A landscape that operates at a different timescale and a different logic to everything around it.</div>
+      </div>
+
+      <div class="region-header" id="spain">Spain</div>
+
+      <div class="entry">
+        <div class="entry-title">Ordesa y Monte Perdido &mdash; Spanish Pyrenees</div>
+        <div class="entry-body">The most sublime mountain landscape in Spain. The canyon of Ordesa is a vast, sheer-walled trench cut into limestone, with the plateau of Monte Perdido &mdash; the Lost Mountain &mdash; rising above it in permanent snow. The high route (the Faja de Pelay) traverses the canyon wall at mid-height and gives you the vertiginous sense of being inside something that has no interest in your presence. Less visited than the French Pyr&eacute;n&eacute;es, more dramatic, more wild.</div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">Extremadura &mdash; Western Spain</div>
+        <div class="entry-body">One of the least visited and wildest regions in Western Europe. The Monfrag&uuml;e National Park is the best place on the continent to see large birds of prey &mdash; griffon vultures, black vultures, Spanish imperial eagles, black storks &mdash; in extraordinary numbers, circling above ancient river gorges. The wider region contains Roman ruins (M&eacute;rida has the best-preserved Roman theatre in the world), Visigothic heritage, and medieval hilltop towns where almost nobody goes.</div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">Bardenas Reales &mdash; Navarra</div>
+        <div class="entry-body">A badlands plateau in the middle of green northern Spain &mdash; semi-desert, eroded tufa towers and clay formations, a lunar landscape that looks entirely wrong for its geography. The light at dusk turns the clay formations amber and then red. Directly adjacent to the Pyr&eacute;n&eacute;es and the green Navarrese countryside, which makes the contrast more disorienting.</div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">The Alpujarras &mdash; Sierra Nevada, Andalusia</div>
+        <div class="entry-body">The southern slopes of the Sierra Nevada, where a chain of white Moorish villages clings to deep ravines at altitude. Their architecture, their water systems (acequias channelling snowmelt through the terraces), and their way of organising space in relation to the mountain are all pre-Christian. Gerald Brenan lived here in the 1920s and wrote <em>South from Granada</em> about it. The highest peaks (Mulhac&eacute;n, Veleta) are the highest in mainland Spain and genuinely wild. Snow in April, desert light by midday.</div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">Picos de Europa &mdash; Asturias / Cantabria</div>
+        <div class="entry-body">A compact massif of extraordinary violence &mdash; limestone peaks rising almost vertically from the Atlantic coast, the mountains simply arriving out of the green northern plain. The Cares Gorge traverses twelve kilometres of sheer canyon at river level, walls rising 1,000 metres on either side. In autumn it is largely empty, the beech forests turning gold above the gorge, the peaks already in snow.</div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">Costa da Morte &mdash; Galicia</div>
+        <div class="entry-body">The "Coast of Death" &mdash; named not for marketing but for the hundreds of shipwrecks along this stretch of Atlantic shoreline. Cape Finisterre is where the Camino de Santiago ends: pilgrims have been coming here since before Christianity, to stand at what was literally believed to be the edge of the world. The tradition of burning your boots here is old and genuine. Beyond the pilgrimage context, the coast itself is wild and almost unvisited.</div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">The Galician Interior &mdash; Castro Culture</div>
+        <div class="entry-body">Away from the pilgrimage routes, inland Galicia is one of the most archaeologically layered and mythologically alive landscapes in Europe. The <em>castros</em> &mdash; Iron Age hillforts, thousands of them, many still unexcavated &mdash; dot the landscape. The culture that built them was Celtic-Iberian; its traces are everywhere, in the language, the bagpipes (<em>gaita</em>), and the <em>meiga</em> tradition of witchcraft and herbalism that was never fully suppressed. The landscape is green, granite, perpetually misted.</div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">Altamira &mdash; Cantabria</div>
+        <div class="entry-body">The Palaeolithic cave paintings at Altamira were made between 36,000 and 14,000 years ago &mdash; bison, horses, and deer rendered in ochre and charcoal on a limestone ceiling with a fluency and naturalism that stopped 19th-century scholars from believing they were genuine. The original cave is now closed; the replica is faithful. The real reason to go is the sense of standing in a place where human consciousness was already doing something that has not been improved upon in 36,000 years. Hidden knowledge in the most literal sense.</div>
+      </div>
+
+      <div class="region-header" id="archaeological">Archaeological &amp; Ancient</div>
+
+      <div class="entry">
+        <div class="entry-title">Malta &mdash; The Megalithic Temples &amp; The Hypogeum</div>
+        <div class="entry-body">The Maltese temples (&Ħa&#289;ar Qim, Mnajdra) are among the oldest freestanding stone structures on Earth, predating Stonehenge by a thousand years. The Hypogeum of &Ħal Saflieni is an underground sanctuary carved entirely by hand from the rock &mdash; three levels descending into the earth, used for burial and ritual, with acoustics engineered so that a human voice resonates through the entire structure. Only 80 visitors per day are permitted.</div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">G&ouml;bekli Tepe &mdash; Turkey</div>
+        <div class="entry-body">The oldest known temple complex on Earth, 12,000 years old &mdash; predating agriculture, predating writing, predating everything we thought we knew about the sequence of civilisation. Massive carved pillars arranged in circles, depicting animals no one has fully explained. Hidden for millennia under a deliberate mound of earth &mdash; someone buried it intentionally. Unearthed only in 1994. The question of what they knew, and why they wanted to preserve it, has no satisfactory answer.</div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">Cappadocia &mdash; Turkey</div>
+        <div class="entry-body">A landscape of volcanic tufa carved by millennia of erosion into towers and chimneys &mdash; and then hollowed out from the 4th century onward to create underground cities descending eight levels into the earth, cave churches painted with extraordinary frescoes, entire communities living inside the rock. The landscape above ground is already otherworldly; the landscape beneath it is stranger still.</div>
+      </div>
+
+      <div class="region-header" id="urban">Urban &mdash; The Right Kind of City</div>
+
+      <div class="entry">
+        <div class="entry-title">Tbilisi &mdash; Georgia</div>
+        <div class="entry-body">An ancient city at the crossroads of every major trade and pilgrimage route between East and West &mdash; Persian, Ottoman, Russian, Soviet, and something older beneath all of it. The old town (Abanotubani) is crumbling and beautiful: wooden balconies over cobbled streets, sulphurous bathhouses built over natural hot springs. Georgian wine culture goes back 8,000 years &mdash; the oldest in the world. A city that has not yet been processed into a version of itself for consumption.</div>
+      </div>
+
+      <div class="entry">
+        <div class="entry-title">Plovdiv &mdash; Bulgaria</div>
+        <div class="entry-body">One of the oldest continuously inhabited cities in Europe, with a Roman amphitheatre sitting open in the middle of town and a medieval old quarter of painted merchant houses above it. It has the layered quality Sebald finds in Suffolk &mdash; the past refusing to stay buried, visible through the present. Quiet, unhurried, cheap, and almost entirely off the tourist circuit. The kind of place where you understand that most of what gets marketed as culture is a simulation of what this actually is.</div>
+      </div>
+
+    </main>
+</div>
+
+<footer>Soul Harmony Guide &mdash; March 2026 &mdash; session ongoing</footer>
+
+</body>
+</html>
