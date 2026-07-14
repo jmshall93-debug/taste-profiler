@@ -399,24 +399,6 @@ function showOpeningGreeting() {
   saveSession();
 }
 
-// ── Startup ──────────────────────────────────────────────────────────────────
-(function init() {
-  const saved = tryLoadSession();
-  if (saved) {
-    messages = saved.messages;
-    named    = saved.named || [];
-    saved.messages.forEach(m => {
-      if (m.role !== 'system') renderMessage(m.role, m.content, false);
-    });
-    rebuildNamedFromMessages();
-    detectMode();
-  } else {
-    showOpeningGreeting();
-  }
-
-  userInputEl.focus();
-})();
-
 // ── Persistence ──────────────────────────────────────────────────────────────
 function saveSession() {
   try {
@@ -624,6 +606,8 @@ function isExcludedLabel(title) {
 }
 
 function parseMapItems(text) {
+  if (!text || typeof text !== 'string') return [];
+
   const items = [];
   const lines = text.split('\n');
 
@@ -632,11 +616,18 @@ function parseMapItems(text) {
     if (!trimmed) continue;
 
     const numbered = trimmed.match(
-      /^\d+\.\s+(?:\*\*(.+?)\*\*|"(.+?)"(?:\s+by\s+[^"]+)?|([^:(]+?))(?:\s*\([^)]+\))?\s*:/
+      /^\d+\.\s+(?:\*\*(.+?)\*\*|"(.+?)"(?:\s+by\s+[^"]+)?|([^:(]+?))(?:\s*\([^)]+\))?(?:\s*[:—-]\s*|\s+)/
     );
     if (numbered) {
       const raw = numbered[1] || numbered[2] || numbered[3];
       const title = normalizeMapTitle(raw);
+      if (!isExcludedLabel(title)) items.push(title);
+      continue;
+    }
+
+    const boldLine = trimmed.match(/^\*\*(.+?)\*\*(?:\s*\([^)]+\))?(?:\s*[:—-]\s*|\s*$)/);
+    if (boldLine) {
+      const title = normalizeMapTitle(boldLine[1]);
       if (!isExcludedLabel(title)) items.push(title);
       continue;
     }
@@ -667,15 +658,6 @@ function mergeNamedFromText(text) {
   if (changed) renderNamed();
 }
 
-function rebuildNamedFromMessages() {
-  named = [];
-  for (const message of messages) {
-    if (message.role !== 'assistant') continue;
-    mergeNamedFromText(message.content);
-  }
-  renderNamed();
-}
-
 function renderNamed() {
   if (named.length === 0) {
     notesList.innerHTML = '<p class="empty-state">Your map will take shape as the conversation unfolds.</p>';
@@ -689,19 +671,53 @@ function renderNamed() {
   ).join('');
 }
 
+function rebuildNamedFromMessages() {
+  named = [];
+  for (const message of messages) {
+    if (!message || message.role !== 'assistant') continue;
+    mergeNamedFromText(message.content);
+  }
+  renderNamed();
+}
+
 function escHtml(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
 // ── Mode detection ────────────────────────────────────────────────────────────
 function detectMode(text = '') {
-  const t = text.toLowerCase();
+  const t = (text || '').toLowerCase();
   if (t.includes('soul reading') || t.includes('underlying thread') ||
       t.includes('what draws you across') || t.includes('what i see')) {
     modeBadge.textContent = 'Reading';
     modeBadge.classList.add('reading');
   }
 }
+
+// ── Startup ──────────────────────────────────────────────────────────────────
+(function init() {
+  try {
+    const saved = tryLoadSession();
+    if (saved && Array.isArray(saved.messages) && saved.messages.length > 0) {
+      messages = saved.messages;
+      saved.messages.forEach(m => {
+        if (m && m.role !== 'system' && m.content) renderMessage(m.role, m.content, false);
+      });
+      rebuildNamedFromMessages();
+      const lastAssistant = [...messages].reverse().find(m => m && m.role === 'assistant');
+      detectMode(lastAssistant?.content || '');
+    } else {
+      showOpeningGreeting();
+    }
+  } catch {
+    messages = [];
+    named = [];
+    messagesEl.innerHTML = '';
+    showOpeningGreeting();
+  }
+
+  userInputEl.focus();
+})();
 </script>
 </body>
 </html>
