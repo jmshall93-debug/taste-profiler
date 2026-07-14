@@ -46,6 +46,7 @@ const ROOT = path.resolve(__dirname);
 const INDEX_HTML = path.join(ROOT, 'index.html');
 
 app.disable('x-powered-by');
+app.set('trust proxy', 1);
 
 app.use(express.json({ limit: MAX_BODY_BYTES }));
 
