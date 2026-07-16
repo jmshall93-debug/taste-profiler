@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Taste Profiler — Soul Harmony Guide</title>
+  <title>Taste Profiler — Mapping Your Affinities</title>
   <style>
     :root {
       --bg-deep:    #070706;
@@ -424,7 +424,7 @@
 
     /* ── Sidebar ────────────────────────────────── */
     #sidebar {
-      width: 300px;
+      width: 332px;
       flex-shrink: 0;
       display: flex;
       flex-direction: column;
@@ -473,32 +473,92 @@
       padding: 0.75rem 0;
     }
 
-    .note-entry {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.7rem;
-      padding: 0.85rem 0;
+    .map-section {
+      margin-top: 1.1rem;
+    }
+
+    .map-section:first-child { margin-top: 0.35rem; }
+
+    .map-section-label {
+      font-family: var(--font-body);
+      font-size: 0.62rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      margin-bottom: 0.55rem;
+    }
+
+    .theme-entry,
+    .work-entry,
+    .link-entry {
+      padding: 0.7rem 0;
       border-bottom: 1px solid var(--border);
       animation: fadeIn 0.2s ease;
     }
 
-    .note-entry:last-child { border-bottom: none; }
+    .theme-entry:last-child,
+    .work-entry:last-child,
+    .link-entry:last-child { border-bottom: none; }
 
-    .note-index {
-      flex-shrink: 0;
-      width: 1.25rem;
-      font-family: var(--font-display);
-      font-size: 0.68rem;
-      color: var(--accent-dim);
-      padding-top: 0.1rem;
-      text-align: left;
+    .theme-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.75rem;
     }
 
-    .note-title {
+    .theme-label {
+      font-family: var(--font-display);
+      font-size: 0.88rem;
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    .theme-confidence {
+      flex-shrink: 0;
+      font-family: var(--font-body);
+      font-size: 0.62rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+    }
+
+    .theme-confidence.solid { color: var(--text-muted); opacity: 0.9; }
+    .theme-confidence.strong { color: var(--accent-dim); }
+
+    .theme-evidence {
+      margin-top: 0.3rem;
+      font-family: var(--font-body);
+      font-size: 0.72rem;
+      color: var(--text-faint);
+      line-height: 1.5;
+    }
+
+    .work-title {
       font-family: var(--font-body);
       font-size: 0.82rem;
       color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    .work-themes {
+      margin-top: 0.25rem;
+      font-family: var(--font-body);
+      font-size: 0.68rem;
+      color: var(--text-faint);
+      line-height: 1.4;
+    }
+
+    .link-entry {
+      font-family: var(--font-body);
+      font-size: 0.74rem;
+      color: var(--text-muted);
       line-height: 1.55;
+    }
+
+    .link-pair {
+      color: var(--text);
+      font-size: 0.78rem;
     }
 
     @keyframes fadeIn {
@@ -508,7 +568,7 @@
 
     @media (prefers-reduced-motion: reduce) {
       .typing-dot { animation: none; opacity: 0.45; }
-      .note-entry { animation: none; }
+      .theme-entry, .work-entry, .link-entry { animation: none; }
       #messages { scroll-behavior: auto; }
       #mode-badge, #send-btn, #clear-btn, #user-input { transition: none; }
     }
@@ -552,9 +612,9 @@
 <!-- ── Main App ───────────────────────────────────── -->
 <div id="app">
   <div id="app-header">
-    <h1>Taste Profiler — Soul Harmony Guide</h1>
+    <h1>Taste Profiler — Mapping Your Affinities</h1>
     <div class="header-right">
-      <span id="mode-badge">Collection</span>
+      <span id="mode-badge">Mapping</span>
       <button id="clear-btn" title="Clear conversation">Clear</button>
     </div>
   </div>
@@ -569,9 +629,9 @@
     </div>
 
     <div id="sidebar">
-      <div class="sidebar-head">Your taste map</div>
+      <div class="sidebar-head">Your affinity map</div>
       <div id="notes-list">
-        <p class="empty-state">Your map will take shape as the conversation unfolds.</p>
+        <p class="empty-state">Affinities emerge as patterns clarify across what you share.</p>
       </div>
     </div>
   </div>
@@ -582,15 +642,19 @@
 'use strict';
 
 // ── Config & state ───────────────────────────────────────────────────────────
-const STORAGE_KEY  = 'taste_profiler_v1';
-const OPENING_GREETING = "I am the Taste Profiler. I help you map what you love — across film, music, books, places, and ideas — and suggest specific works worth exploring as the pattern becomes clear.\n\nBegin with something you return to, and tell me what holds you there.";
+const STORAGE_KEY  = 'taste_profiler_v2';
+const OPENING_GREETING = "I am the Taste Profiler. I help you discover affinities — the deeper patterns beneath what you love — across film, music, books, places, and ideas. Recommendations come later, once those patterns are clear.\n\nBegin with something you return to, and tell me what holds you there.";
 
 let messages  = [];
-let named     = [];
+let profile   = emptyProfile();
 let loading   = false;
 let userPinnedToBottom = true;
 
 const SCROLL_THRESHOLD = 96;
+
+function emptyProfile() {
+  return { themes: [], works: [], links: [] };
+}
 
 // ── DOM refs ─────────────────────────────────────────────────────────────────
 const messagesEl = document.getElementById('messages');
@@ -604,7 +668,8 @@ const notesList  = document.getElementById('notes-list');
 marked.setOptions({ breaks: true, gfm: true });
 
 function renderMarkdown(content) {
-  return marked.parse(content);
+  const { visible } = stripAffinityMap(content);
+  return marked.parse(visible);
 }
 
 function setLoadingState(isLoading) {
@@ -638,7 +703,7 @@ function showOpeningGreeting() {
 // ── Persistence ──────────────────────────────────────────────────────────────
 function saveSession() {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ messages, named }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ messages, profile }));
   } catch {}
 }
 
@@ -652,12 +717,13 @@ function tryLoadSession() {
 clearBtn.addEventListener('click', () => {
   if (!confirm('Clear the conversation and start fresh?')) return;
   messages = [];
-  named    = [];
+  profile  = emptyProfile();
   messagesEl.innerHTML = '';
-  notesList.innerHTML  = '<p class="empty-state">Your map will take shape as the conversation unfolds.</p>';
-  modeBadge.textContent = 'Collection';
+  renderProfile();
+  modeBadge.textContent = 'Mapping';
   modeBadge.classList.remove('reading');
   localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem('taste_profiler_v1');
   showOpeningGreeting();
 });
 
@@ -755,7 +821,7 @@ async function call(userText) {
     scrollMessagesIfPinned();
 
     messages.push({ role: 'assistant', content: full });
-    mergeNamedFromText(full);
+    ingestAssistantContent(full);
     detectMode(full);
     saveSession();
 
@@ -824,19 +890,47 @@ function renderError(msg) {
   scrollMessagesIfPinned(true);
 }
 
-// ── Sidebar: build taste map from assistant responses ───────────────────────
+// ── Affinity map: parse machine block + living sidebar ───────────────────────
+const AFFINITY_MAP_RE = /<!--\s*affinity-map\s*([\s\S]*?)-->/i;
+const AFFINITY_MAP_OPEN_RE = /<!--\s*affinity-map/i;
+
 const EXCLUDED_LABELS = new Set([
   'soul reading',
+  'affinity reading',
   'suggestions for exploration',
   'suggestions',
+  'first bearings',
+  'insight',
   'underlying threads',
   'collection mode',
   'reading & discovery mode',
   'reading and discovery mode',
 ]);
 
+function stripAffinityMap(text) {
+  if (!text || typeof text !== 'string') return { visible: '', patch: null };
+
+  let visible = text;
+  let patch = null;
+  const match = text.match(AFFINITY_MAP_RE);
+
+  if (match) {
+    visible = text.replace(AFFINITY_MAP_RE, '').replace(/\n{3,}/g, '\n\n').trimEnd();
+    try {
+      patch = JSON.parse(match[1].trim());
+    } catch {}
+  } else {
+    const incomplete = text.search(AFFINITY_MAP_OPEN_RE);
+    if (incomplete !== -1) {
+      visible = text.slice(0, incomplete).trimEnd();
+    }
+  }
+
+  return { visible, patch };
+}
+
 function normalizeMapTitle(raw) {
-  let title = raw.trim()
+  let title = String(raw || '').trim()
     .replace(/\*\*/g, '')
     .replace(/"/g, '')
     .replace(/\s*\([^)]*\)\s*$/i, '')
@@ -855,7 +949,7 @@ function isExcludedLabel(title) {
   return !key || key.length < 3 || EXCLUDED_LABELS.has(key);
 }
 
-function parseMapItems(text) {
+function parseFallbackWorks(text) {
   if (!text || typeof text !== 'string') return [];
 
   const items = [];
@@ -879,75 +973,214 @@ function parseMapItems(text) {
     if (numberedTitle) {
       const title = normalizeMapTitle(numberedTitle[1]);
       if (!isExcludedLabel(title)) items.push(title);
-      continue;
-    }
-
-    const boldLine = trimmed.match(/^\*\*(.+?)\*\*(?:\s*\([^)]+\))?(?:\s*[:—-]\s*|\s*$)/);
-    if (boldLine) {
-      const title = normalizeMapTitle(boldLine[1]);
-      if (!isExcludedLabel(title)) items.push(title);
-      continue;
-    }
-
-    const boldOnly = [...trimmed.matchAll(/\*\*([^*]+)\*\*/g)].map(m => m[1].trim());
-    for (const raw of boldOnly) {
-      const title = normalizeMapTitle(raw);
-      if (!isExcludedLabel(title)) items.push(title);
     }
   }
 
   return items;
 }
 
-function mergeNamedFromText(text) {
-  const incoming = parseMapItems(text);
-  if (incoming.length === 0) return;
+function themeLabelById(id) {
+  const theme = profile.themes.find(t => t.id === id);
+  return theme ? theme.label : id;
+}
 
+function mergeProfile(patch) {
+  if (!patch || typeof patch !== 'object') return false;
   let changed = false;
-  for (const title of incoming) {
-    const exists = named.some(n => n.toLowerCase() === title.toLowerCase());
-    if (!exists) {
-      named.push(title);
-      changed = true;
+
+  if (Array.isArray(patch.themes)) {
+    for (const theme of patch.themes) {
+      if (!theme || !theme.id || !theme.label) continue;
+      const confidence = ['emerging', 'solid', 'strong'].includes(theme.confidence)
+        ? theme.confidence
+        : 'emerging';
+      const evidence = Array.isArray(theme.evidence)
+        ? theme.evidence.map(e => String(e).trim()).filter(Boolean).slice(0, 3)
+        : [];
+      const idx = profile.themes.findIndex(t => t.id === theme.id);
+      const next = {
+        id: String(theme.id),
+        label: String(theme.label).trim(),
+        confidence,
+        evidence,
+      };
+      if (idx === -1) {
+        profile.themes.push(next);
+        changed = true;
+      } else {
+        const prev = profile.themes[idx];
+        if (
+          prev.label !== next.label
+          || prev.confidence !== next.confidence
+          || JSON.stringify(prev.evidence) !== JSON.stringify(next.evidence)
+        ) {
+          profile.themes[idx] = next;
+          changed = true;
+        }
+      }
     }
   }
 
-  if (changed) renderNamed();
+  if (Array.isArray(patch.works)) {
+    for (const work of patch.works) {
+      if (!work || !work.title) continue;
+      const title = normalizeMapTitle(work.title);
+      if (isExcludedLabel(title)) continue;
+      const themes = Array.isArray(work.themes)
+        ? [...new Set(work.themes.map(t => String(t)))]
+        : [];
+      const idx = profile.works.findIndex(w => w.title.toLowerCase() === title.toLowerCase());
+      if (idx === -1) {
+        profile.works.push({ title, themes });
+        changed = true;
+      } else {
+        const merged = [...new Set([...(profile.works[idx].themes || []), ...themes])];
+        if (JSON.stringify(profile.works[idx].themes) !== JSON.stringify(merged)) {
+          profile.works[idx].themes = merged;
+          changed = true;
+        }
+      }
+    }
+  }
+
+  if (Array.isArray(patch.links)) {
+    for (const link of patch.links) {
+      if (!link || !link.from || !link.to) continue;
+      const from = String(link.from);
+      const to = String(link.to);
+      const note = link.note ? String(link.note).trim() : '';
+      const idx = profile.links.findIndex(l => l.from === from && l.to === to);
+      if (idx === -1) {
+        profile.links.push({ from, to, note });
+        changed = true;
+      } else if (note && profile.links[idx].note !== note) {
+        profile.links[idx].note = note;
+        changed = true;
+      }
+    }
+  }
+
+  return changed;
 }
 
-function renderNamed() {
-  if (named.length === 0) {
-    notesList.innerHTML = '<p class="empty-state">Your map will take shape as the conversation unfolds.</p>';
+function seedWorksFromFallback(text) {
+  const titles = parseFallbackWorks(text);
+  if (titles.length === 0) return false;
+  return mergeProfile({
+    works: titles.map(title => ({ title, themes: [] })),
+  });
+}
+
+function ingestAssistantContent(text) {
+  const { patch } = stripAffinityMap(text);
+  let changed = false;
+  if (patch) changed = mergeProfile(patch) || changed;
+  if (!patch || !Array.isArray(patch.works) || patch.works.length === 0) {
+    if (text.includes('## First Bearings') || text.includes('## Suggestions for Exploration')) {
+      changed = seedWorksFromFallback(text) || changed;
+    }
+  }
+  if (changed) renderProfile();
+}
+
+function renderProfile() {
+  const hasThemes = profile.themes.length > 0;
+  const hasWorks = profile.works.length > 0;
+  const hasLinks = profile.links.length > 0;
+
+  if (!hasThemes && !hasWorks && !hasLinks) {
+    notesList.innerHTML = '<p class="empty-state">Affinities emerge as patterns clarify across what you share.</p>';
     return;
   }
 
-  const visible = named.slice(-40);
-  const offset = named.length - visible.length;
-  notesList.innerHTML = visible.map((title, index) =>
-    `<div class="note-entry"><div class="note-index">${offset + index + 1}</div><div class="note-title">${escHtml(title)}</div></div>`
-  ).join('');
+  const confidenceRank = { emerging: 0, solid: 1, strong: 2 };
+  const themes = [...profile.themes].sort(
+    (a, b) => (confidenceRank[b.confidence] || 0) - (confidenceRank[a.confidence] || 0)
+  );
+  const works = profile.works.slice(-40);
+  const links = profile.links.slice(-20);
+
+  let html = '';
+
+  if (hasThemes) {
+    html += `<div class="map-section"><div class="map-section-label">Affinities</div>`;
+    html += themes.map(theme => {
+      const evidence = theme.evidence && theme.evidence[0]
+        ? `<div class="theme-evidence">${escHtml(theme.evidence[0])}</div>`
+        : '';
+      return `<div class="theme-entry">
+        <div class="theme-head">
+          <div class="theme-label">${escHtml(theme.label)}</div>
+          <div class="theme-confidence ${escHtml(theme.confidence)}">${escHtml(theme.confidence)}</div>
+        </div>
+        ${evidence}
+      </div>`;
+    }).join('');
+    html += `</div>`;
+  }
+
+  if (hasWorks) {
+    html += `<div class="map-section"><div class="map-section-label">Works</div>`;
+    html += works.map(work => {
+      const tags = (work.themes || [])
+        .map(id => themeLabelById(id))
+        .filter(Boolean)
+        .join(' · ');
+      const tagLine = tags
+        ? `<div class="work-themes">${escHtml(tags)}</div>`
+        : '';
+      return `<div class="work-entry">
+        <div class="work-title">${escHtml(work.title)}</div>
+        ${tagLine}
+      </div>`;
+    }).join('');
+    html += `</div>`;
+  }
+
+  if (hasLinks) {
+    html += `<div class="map-section"><div class="map-section-label">Connections</div>`;
+    html += links.map(link => {
+      const from = themeLabelById(link.from);
+      const to = themeLabelById(link.to);
+      const note = link.note ? ` — ${escHtml(link.note)}` : '';
+      return `<div class="link-entry"><span class="link-pair">${escHtml(from)} ↔ ${escHtml(to)}</span>${note}</div>`;
+    }).join('');
+    html += `</div>`;
+  }
+
+  notesList.innerHTML = html;
 }
 
-function rebuildNamedFromMessages() {
-  named = [];
+function rebuildProfileFromMessages() {
+  profile = emptyProfile();
   for (const message of messages) {
-    if (!message || message.role !== 'assistant') continue;
-    mergeNamedFromText(message.content);
+    if (!message || message.role !== 'assistant' || !message.content) continue;
+    ingestAssistantContent(message.content);
   }
-  renderNamed();
+  renderProfile();
 }
 
 function escHtml(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
 // ── Mode detection ────────────────────────────────────────────────────────────
 function detectMode(text = '') {
   const t = (text || '').toLowerCase();
-  if (t.includes('soul reading') || t.includes('underlying thread') ||
-      t.includes('what draws you across') || t.includes('what i see')) {
+  if (
+    t.includes('affinity reading')
+    || t.includes('soul reading')
+    || t.includes('suggestions for exploration')
+    || t.includes('first bearings')
+  ) {
     modeBadge.textContent = 'Reading';
     modeBadge.classList.add('reading');
+  } else if (t.includes('## insight')) {
+    modeBadge.textContent = 'Insight';
+    modeBadge.classList.remove('reading');
+  } else {
+    modeBadge.textContent = 'Mapping';
+    modeBadge.classList.remove('reading');
   }
 }
 
@@ -957,20 +1190,26 @@ function detectMode(text = '') {
     const saved = tryLoadSession();
     if (saved && Array.isArray(saved.messages) && saved.messages.length > 0) {
       messages = saved.messages;
+      profile = emptyProfile();
+      if (saved.profile && typeof saved.profile === 'object') {
+        mergeProfile(saved.profile);
+      }
       saved.messages.forEach(m => {
         if (m && m.role !== 'system' && m.content) renderMessage(m.role, m.content, false);
       });
-      rebuildNamedFromMessages();
+      rebuildProfileFromMessages();
       const lastAssistant = [...messages].reverse().find(m => m && m.role === 'assistant');
       detectMode(lastAssistant?.content || '');
     } else {
       showOpeningGreeting();
+      renderProfile();
     }
   } catch {
     messages = [];
-    named = [];
+    profile = emptyProfile();
     messagesEl.innerHTML = '';
     showOpeningGreeting();
+    renderProfile();
   }
 
   userInputEl.focus();
