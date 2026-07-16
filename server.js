@@ -270,12 +270,20 @@ app.post('/api/chat', chatLimiter, async (req, res) => {
 });
 
 app.get('/', (_req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+  res.setHeader('Pragma', 'no-cache');
   res.sendFile(INDEX_HTML);
 });
 
 app.use(express.static(ROOT, {
   index: false,
   dotfiles: 'ignore',
+  setHeaders(res, filePath) {
+    if (filePath.endsWith('index.html')) {
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+      res.setHeader('Pragma', 'no-cache');
+    }
+  },
 }));
 
 app.listen(PORT, '0.0.0.0', () => {
